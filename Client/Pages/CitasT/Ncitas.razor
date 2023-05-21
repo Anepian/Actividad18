@@ -1,0 +1,33 @@
+﻿@page "/Citas/Nuevo"
+@using Actividad18.Shared.Models;
+@inject HttpClient http
+@inject NavigationManager navegar
+
+<h2>Nuevo Cita</h2>
+
+<EditForm Model="pa" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="mb-3">
+        <label for="dtFecha" class="form-label">Fecha</label>
+        <InputDate id="dtFecha" class="form-control" @bind-Value="pa.Fecha" />
+    </div>
+    <div class="mb-3">
+        <label for="txtMedico" class="form-label">Medico</label>
+        <InputText id="txtMedico" class="form-control" @bind-Value="pa.Medico" />
+    </div>
+    <div class="mb-3">
+        <label for="numId" class="form-label">Id del Paciente</label>
+        <InputNumber id="numId" class="form-control" @bind-Value="pa.PacienteId" />
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</EditForm>
+
+@code {
+    private Citas pa = new Citas();
+    private async void Guardar()
+    {
+        await http.PostAsJsonAsync("api/Citas", pa);
+        navegar.NavigateTo("/Citas");
+    }
+}

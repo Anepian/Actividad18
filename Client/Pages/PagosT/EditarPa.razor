@@ -1,0 +1,46 @@
+﻿@page "/Pagos/Editar/{Id:int}"
+@inject NavigationManager navegar
+@inject HttpClient http
+@using Actividad18.Shared.Models
+
+<h2>Editar Pagos</h2>
+
+
+<EditForm Model="pa" OnValidSubmit="Editar">
+    <DataAnnotationsValidator />
+
+    <div class="mb-3">
+        <label for="numTotal" class="form-label">Total</label>
+        <InputNumber id="numTotal" class="form-control" @bind-Value="pa.Total" />
+    </div>
+    <div class="mb-3">
+        <label for="numPago" class="form-label">Pago</label>
+        <InputNumber id="numPago" class="form-control" @bind-Value="pa.Pago" />
+    </div>
+    <div class="mb-3">
+        <label for="dtFecha" class="form-label">Fecha</label>
+        <InputDate id="dtFecha" class="form-control" @bind-Value="pa.Fecha" />
+    </div>
+    <div class="mb-3">
+        <label for="numId" class="form-label">Id de la Citas</label>
+        <InputNumber id="numId" class="form-control" @bind-Value="pa.CitasId" />
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private Pagos pa = new Pagos();
+
+    protected override async Task OnInitializedAsync()
+    {
+        pa = await http.GetFromJsonAsync<Pagos>($"api/Pagos/{Id}");
+    }
+
+    private async void Editar()
+    {
+        await http.PutAsJsonAsync($"api/Pagos/{Id}", pa);
+        navegar.NavigateTo("/Pagos");
+    }
+}

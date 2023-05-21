@@ -1,0 +1,46 @@
+﻿@page "/Pacientes/Editar/{Id:int}"
+@inject NavigationManager navegar
+@inject HttpClient http
+@using Actividad_18.Shared.Models
+
+<h2>Editar Paciente</h2>
+
+
+<EditForm Model="pa" OnValidSubmit="Editar">
+    <DataAnnotationsValidator />
+
+    <div class="mb-3">
+        <label for="txtNombre" class="form-label">Nombre</label>
+        <InputText id="txtNombre" class="form-control" @bind-Value="pa.nombre" />
+    </div>
+    <div class="mb-3">
+        <label for="txtDireccion" class="form-label">Direccion</label>
+        <InputText id="txtDireccion" class="form-control" @bind-Value="pa.direccion" />
+    </div>
+    <div class="mb-3">
+        <label for="txtCorreo" class="form-label">Correo</label>
+        <InputText id="txtCorreo" class="form-control" @bind-Value="pa.correo" />
+    </div>
+    <div class="mb-3">
+        <label for="txtNS" class="form-label">Numero del Seguro Social</label>
+        <InputText id="txtNS" class="form-control" @bind-Value="pa.ns" />
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private Paciente pa = new Paciente();
+
+    protected override async Task OnInitializedAsync()
+    {
+        pa = await http.GetFromJsonAsync<Paciente>($"api/Pacientes/{Id}");
+    }
+
+    private async void Editar()
+    {
+        await http.PutAsJsonAsync($"api/Pacientes/{Id}", pa);
+        navegar.NavigateTo("/Pacientes");
+    }
+}

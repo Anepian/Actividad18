@@ -1,0 +1,37 @@
+﻿@page "/Pago/Nuevo"
+@using Actividad18.Shared.Models;
+@inject HttpClient http
+@inject NavigationManager navegar
+
+<h2>Nuevo Pago</h2>
+
+<EditForm Model="pa" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="mb-3">
+        <label for="numTotal" class="form-label">Total</label>
+        <InputNumber id="numTotal" class="form-control" @bind-Value="pa.Total" />
+    </div>
+    <div class="mb-3">
+        <label for="numPago" class="form-label">Pago</label>
+        <InputNumber id="numPago" class="form-control" @bind-Value="pa.Pago" />
+    </div>
+    <div class="mb-3">
+        <label for="dtFecha" class="form-label">Fecha</label>
+        <InputDate id="dtFecha" class="form-control" @bind-Value="pa.Fecha" />
+    </div>
+    <div class="mb-3">
+        <label for="numId" class="form-label">Id de la Citas</label>
+        <InputNumber id="numId" class="form-control" @bind-Value="pa.CitasId" />
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</EditForm>
+
+@code {
+    private Pagos pa = new Pagos();
+    private async void Guardar()
+    {
+        await http.PostAsJsonAsync("api/Pagos", pa);
+        navegar.NavigateTo("/Pagos");
+    }
+}

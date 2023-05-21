@@ -1,0 +1,70 @@
+﻿@page "/Pacientes"
+@inject NavigationManager navegar
+@inject HttpClient http
+@using Actividad_18.Shared.Models;
+
+
+<h2>Pacienteform</h2>
+
+<button class="btn btn-primary" @onclick="Agregar"><span class="oi oi-plus">Agregar Paciente    </span></button>
+
+@if (Pa == null)
+{
+    <h3>Cargando...</h3>
+}else if (Pa.Count() == 0)
+{
+    <h3>No Existen Registros</h3>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Direccion</th>
+                <th>Correo</th>
+                <th>Numero de Seguridad Social</th>
+                <th>Opciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var a in Pa)
+            {
+                <tr>
+                    <td>@a.id</td>
+                    <td>@a.nombre</td>
+                    <td>@a.direccion</td>
+                    <td>@a.correo</td>
+                    <td>@a.ns</td>
+                    <td><button class="btn btn-warning" @onclick="(()=>Editar(Convert.ToInt32(a.id)))"><span class="oi oi-trash">Editar Paciente</span></button></td>
+                    <td><button class="btn btn-danger   " @onclick="(()=>Eliminar(a))"><span class="oi oi-trash">Eliminar Paciente</span></button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Paciente> Pa = new List<Paciente>();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Pa = await http.GetFromJsonAsync<List<Paciente>>("api/Pacientes");
+    }
+
+    public void Agregar()
+    {
+        navegar.NavigateTo("/Paciente/Nuevo");
+    }
+    public async Task Eliminar(Paciente pacie)
+    {
+        await http.DeleteAsync($"api/Pacientes/{pacie.id}");
+        Pa.Remove(pacie);
+    }
+
+    private void Editar(int Id)
+    {
+        navegar.NavigateTo($"/Pacientes/Editar/{Id}");
+    }
+}

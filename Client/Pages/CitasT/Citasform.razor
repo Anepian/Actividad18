@@ -1,0 +1,68 @@
+﻿@page "/Citas"
+@inject NavigationManager navegar
+@inject HttpClient http
+@using Actividad18.Shared.Models;
+
+
+<h2>Citas Paciente</h2>
+
+<button class="btn btn-primary" @onclick="Agregar"><span class="oi oi-plus">Agregar Cita</span></button>
+
+@if (Pa == null)
+{
+    <h3>Cargando...</h3>
+}else if (Pa.Count() == 0)
+{
+    <h3>No Existen Citas</h3>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Fecha</th>
+                <th>Medico</th>
+                <th>Id del Paciente</th>
+                <th>Opciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var a in Pa)
+            {
+                <tr>
+                    <td>@a.Id</td>
+                    <td>@a.Fecha</td>
+                    <td>@a.Medico</td>
+                    <td>@a.PacienteId</td>
+                    <td><button class="btn btn-warning" @onclick="(()=>Editar(Convert.ToInt32(a.Id)))"><span class="oi oi-trash">Editar Cita</span></button></td>
+                    <td><button class="btn btn-danger   " @onclick="(()=>Eliminar(a))"><span class="oi oi-trash">Eliminar Cita</span></button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Citas> Pa = new List<Citas>();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Pa = await http.GetFromJsonAsync<List<Citas>>("api/Citas");
+    }
+
+    public void Agregar()
+    {
+        navegar.NavigateTo("/Citas/Nuevo");
+    }
+    public async Task Eliminar(Citas cita)
+    {
+        await http.DeleteAsync($"api/Citas/{cita.Id}");
+        Pa.Remove(cita);
+    }
+
+    private void Editar(int Id)
+    {
+        navegar.NavigateTo($"/Citas/Editar/{Id}");
+    }
+}
